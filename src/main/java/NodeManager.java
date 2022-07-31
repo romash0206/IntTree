@@ -1,4 +1,5 @@
 import java.util.Comparator;
+import java.util.NoSuchElementException;
 
 public class NodeManager {
 
@@ -22,13 +23,21 @@ public class NodeManager {
         return getNext(this.root, value);
     }
 
+    public Integer get(Integer value) {
+        if (this.root==null){
+            throw new NoSuchElementException();
+        }
+        return getNextForGet(root,value).getValue();
+    }
+
     /**
-     *
-     * @param root - Текущая проверяемая нода, т.е. нода для которой
-     *             пытаемся добавить элемент в качестве наследника
+     * @param root  - Текущая проверяемая нода, т.е. нода для которой
+     *              пытаемся добавить элемент в качестве наследника
      * @param value - значение добавляемого элемента
      * @return - вновь созданную ноду
      */
+
+
     private Node getNext(Node root, Integer value) {
         // Определяем положение новой ноды в дереве (Слева или справа)
         Direction direction = getDirection(value, root);
@@ -60,8 +69,32 @@ public class NodeManager {
                     return node;
                 }
             }
-            default: return root;
+            default:
+                return root;
         }
+    }
+
+    private Node getNextForGet(Node root, Integer value) {
+        Direction direction = getDirection(value, root);
+        switch (direction) {
+            case LEFT: {
+                if (root.getLeft() != null) {
+                    return getNextForGet(root.getLeft(), value);
+                } else {
+                    throw new NoSuchElementException();
+                }
+            }
+            case RIGHT: {
+                if (root.getRight() != null) {
+                    return getNextForGet(root.getRight(), value);
+                } else {
+                    throw new NoSuchElementException();
+                }
+            }
+            default:
+                return root;
+        }
+
     }
 
     private Direction getDirection(Integer value, Node comparingNode) {
